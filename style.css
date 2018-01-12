@@ -1,0 +1,28 @@
+.container-1{
+  display: flex;
+}
+
+.container-1 div {
+  padding: 10px;
+  font-style: italic;
+}
+
+#belts {
+ width:25%;
+ text-align: center;
+}
+
+#wallets {
+ width:25%;
+ text-align: center;
+}
+
+#lanyards {
+  width: 25%;
+  text-align: center;
+}
+
+#otheritems {
+  width: 25%;
+  text-align: center;
+}
