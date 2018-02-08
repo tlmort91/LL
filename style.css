@@ -7,6 +7,14 @@
   font-style: italic;
 }
 
+/* body {
+  font-family: Helvetica;
+} */
+
+a {
+  outline:0;
+}
+
 #belts {
  width:25%;
  text-align: center;
