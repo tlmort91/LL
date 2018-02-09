@@ -1,5 +1,7 @@
 .container-1{
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .container-1 div {
@@ -16,21 +18,26 @@ a {
 }
 
 #belts {
- width:33%;
- text-align: center;
-}
-
-#wallets {
- width:25%;
+ width:400px;
  text-align: center;
 }
 
 #lanyards {
-  width: 33%;
+  width: 400px;
   text-align: center;
 }
 
 #watchbands {
-  width: 33%;
+  width: 400px;
   text-align: center;
 }
+
+/* @media only screen and (max-width:480px)
+{
+    #belts, #lanyards, #watchbands
+    {
+        display: block;
+        float: none;
+        width: 100%;
+    }
+} */
