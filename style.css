@@ -16,7 +16,7 @@ a {
 }
 
 #belts {
- width:25%;
+ width:33%;
  text-align: center;
 }
 
@@ -26,11 +26,11 @@ a {
 }
 
 #lanyards {
-  width: 25%;
+  width: 33%;
   text-align: center;
 }
 
-#otheritems {
-  width: 25%;
+#watchbands {
+  width: 33%;
   text-align: center;
 }
