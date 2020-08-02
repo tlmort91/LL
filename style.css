@@ -58,6 +58,10 @@ hr {
   max-width:600px;
 }
 
+#mc-field-group {
+  /* width: 400px; */
+  vertical-align: bottom;
+}
 
 /* @media only screen and (max-width:480px)
 {
