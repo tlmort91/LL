@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merry Christmas 2024</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Georgia, serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            min-height: 100vh;
+        }
+
+        .letter {
+            flex: 1;
+            padding: 2rem;
+            background-color: #fff8f8;
+            white-space: pre-line;
+        }
+
+        .letter-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .gallery-section {
+            flex: 1;
+            background: white;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 1;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .date-taken {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px;
+            font-size: 12px;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .controls {
+            padding: 1rem;
+            text-align: center;
+        }
+
+        button {
+            padding: 8px 16px;
+            margin: 0 8px;
+            cursor: pointer;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #0052a3;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90vh;
+            margin: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .letter, .gallery-section {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="letter">
+            <div class="letter-content">
+                9.5 AIH G – Merry Christmas!
+
+What a fun year it has been. In numbers we have tackled together:
+·         4 Weddings (Possums, Allies, Sophies, & Jacobs)
+·         7 destination wkend/holidays (Tassie, Stanley, NZ, Young/Mudgee, Crookwell, Binalong, Mollymoook)
+·         3 cute dates in Sydney (Redfern, Mr T's, the one in Paddington on Oxford St – Busby's?)
+·         1 near blow up (Driving to the engagement).
+·         Countless shared cups of tea
+
+Thanks for all your help (mentally & physically) with my house. It's been a fun project and I look forward to the day when we can tackle some house and garden reno's together!
+
+I am also very much looking forward to moving to Sydney and living together in 2025. After talking about the prospect for so long it's exciting to actually have a plan in place. Can't wait to spend more time just being together for the rudimentary day to day activities, and working on life together as a bit more of a team.
+
+The longer we have been together, I've enjoyed how you have worked on making me a better person, and I am sure there will be more of that next year living together. As long as we don't take things too seriously, and can laugh at ourselves along the way!
+
+Lots of love,
+T xx
+            </div>
+        </div>
+        <div class="gallery-section">
+            <div class="controls">
+                <button onclick="sortGallery('asc')">Sort Oldest First</button>
+                <button onclick="sortGallery('desc')">Sort Newest First</button>
+            </div>
+            <div class="gallery" id="gallery"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal" onclick="closeModal()">
+        <span class="close-modal">&times;</span>
+        <img id="modalImage" src="" alt="Full size image">
+    </div>
+
+    <script>
+        // Function to load and display images from the current directory
+        async function loadGallery() {
+            try {
+                const response = await fetch('.');
+                const text = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+                const links = Array.from(doc.querySelectorAll('a'))
+                    .filter(a => a.href.match(/\.(jpg|jpeg|png|gif)$/i));
+
+                const gallery = document.getElementById('gallery');
+                
+                for (const link of links) {
+                    const imgUrl = link.href;
+                    const div = document.createElement('div');
+                    div.className = 'gallery-item';
+                    
+                    const img = document.createElement('img');
+                    img.src = imgUrl;
+                    img.alt = link.textContent;
+                    
+                    const dateSpan = document.createElement('span');
+                    dateSpan.className = 'date-taken';
+                    
+                    div.appendChild(img);
+                    div.appendChild(dateSpan);
+                    gallery.appendChild(div);
+                    
+                    // Add click handler for modal
+                    div.onclick = () => openModal(imgUrl);
+                    
+                    // Get image metadata
+                    await getImageDate(img, dateSpan);
+                }
+            } catch (error) {
+                console.error('Error loading gallery:', error);
+            }
+        }
+
+        // Function to get image date using EXIF data
+        async function getImageDate(img, dateSpan) {
+            try {
+                const response = await fetch(img.src);
+                const blob = await response.blob();
+                const arrayBuffer = await blob.arrayBuffer();
+                const view = new DataView(arrayBuffer);
+                
+                let date = null;
+                
+                // Try to find EXIF date
+                if (view.getUint16(0, false) === 0xFFD8) {
+                    const length = view.byteLength;
+                    let offset = 2;
+                    
+                    while (offset < length) {
+                        if (view.getUint16(offset, false) === 0xFFE1) {
+                            if (view.getUint32(offset + 4, false) === 0x45786966) {
+                                const little = view.getUint16(offset + 10, false) === 0x4949;
+                                offset += 14;
+                                const tags = view.getUint16(offset, little);
+                                offset += 2;
+                                
+                                for (let i = 0; i < tags; i++) {
+                                    if (view.getUint16(offset + (i * 12), little) === 0x9003) {
+                                        date = new Date(view.getUint32(offset + (i * 12) + 8, little) * 1000);
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        offset += view.getUint16(offset + 2, false) + 2;
+                    }
+                }
+                
+                // Fallback to file modification date if no EXIF
+                if (!date) {
+                    const fileStats = await fetch(img.src, { method: 'HEAD' });
+                    date = new Date(fileStats.headers.get('last-modified'));
+                }
+                
+                if (date) {
+                    img.dataset.date = date.getTime();
+                    dateSpan.textContent = date.toLocaleDateString();
+                }
+            } catch (error) {
+                console.error('Error getting image date:', error);
+                dateSpan.textContent = 'Date unknown';
+            }
+        }
+
+        // Function to sort gallery
+        function sortGallery(direction) {
+            const gallery = document.getElementById('gallery');
+            const items = Array.from(gallery.children);
+            
+            items.sort((a, b) => {
+                const dateA = Number(a.querySelector('img').dataset.date) || 0;
+                const dateB = Number(b.querySelector('img').dataset.date) || 0;
+                return direction === 'asc' ? dateA - dateB : dateB - dateA;
+            });
+            
+            gallery.innerHTML = '';
+            items.forEach(item => gallery.appendChild(item));
+        }
+
+        // Modal functions
+        function openModal(imgUrl) {
+            const modal = document.getElementById('modal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'block';
+            modalImg.src = imgUrl;
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+        }
+
+        // Load gallery when page loads
+        window.onload = loadGallery;
+    </script>
+</body>
+</html>
